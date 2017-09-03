@@ -15,11 +15,13 @@ export default class ContactFullDetail extends React.Component {
     render() {
         return (
             <ScrollView>
-                <Text style={styles.name}>{this.props.data.name}</Text>
-                <Image source={{ uri: this.props.data.picture }} style={styles.image}></Image>
-                <Text style={styles.name}>Mobile :<Text style={styles.name}>{this.props.data.telephone}</Text></Text>
-                <Text style={styles.name}>Email : <Text style={styles.name}>{this.props.data.email}</Text></Text>
-                <Text style={styles.name}>Address : <Text style={styles.name}>{this.props.data.address}</Text></Text>
+                <View style={{marginVertical: 20}}>
+                    <Text style={styles.name}>{this.props.data.name}</Text>
+                    <Image source={{ uri: this.props.data.picture }} style={styles.image}></Image>
+                    <Text style={styles.name}>Mobile :<Text style={styles.name}>{this.props.data.telephone}</Text></Text>
+                    <Text style={styles.name}>Email : <Text style={styles.body}>{this.props.data.email}</Text></Text>
+                    <Text style={styles.name}>Address : <Text style={styles.body}>{this.props.data.address}</Text></Text>
+                </View>
                 <LogoutButton />
             </ScrollView>
         )
@@ -56,14 +58,15 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     image: {
-        height: 240,
-        width: 360,
-        resizeMode: 'contain',
+        resizeMode: 'cover',
         margin: 20,
-        alignItems: 'center'
+        alignItems: 'center',
+        height: 100,
+        borderRadius: 50,
+        width: 100,
     },
     body: {
-        fontSize: 15,
-        flex: 0.2
+        fontSize: 17,
+        fontWeight: 'normal'
     }
 })

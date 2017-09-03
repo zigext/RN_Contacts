@@ -1,15 +1,22 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Button, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, Button, TouchableHighlight, AsyncStorage } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 import tcomb from 'tcomb-form-native'
 import firebase from '../Firebase'
 
 
 export default class LogoutButton extends Component {
+
+    saveUser = async (user) => {
+        await AsyncStorage.setItem('user', 'null')
+        console.log("save user to null")
+    }
+
     logOut = () => {
         firebase.auth().signOut()
             .then(() => {
                 console.log('User signed out successfully')
+                this.saveUser()
                 Actions.loginPage()
             })
             .catch()
@@ -38,6 +45,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignSelf: 'stretch',
         justifyContent: 'center',
-        margin: 30
+        marginHorizontal: 30
     }
 })
