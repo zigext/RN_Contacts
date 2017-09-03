@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  ListView
-} from 'react-native';
+import {AppRegistry, StyleSheet, Text, View, ListView, AsyncStorage} from 'react-native';
 
 // import ToDos from './components/ToDos'
 import firebase from './Firebase'
@@ -17,16 +11,44 @@ import AddContact from './AddContact'
 import ContactFullDetail from './ContactFullDetail'
 
 export default class fb01 extends Component {
+  // constructor(props){
+  //   super(props)
+  //   this.state = {
+  //     user: null,
+  //     loggedIn: false
+  //   }
+  // }
+
+  // componentWillMount = () => {
+  //   const user = this.fetchUser()
+  //   if (user) {
+  //     this.setState({
+  //       user: user,
+  //       loggedIn: true
+  //     })
+  //   }
+  // }
+
+  // fetchUser = async () => {
+  //   const value = await AsyncStorage.getItem('user')
+
+  //   if(value === 'null')  return null
+  //   const user = JSON.parse(value)
+  //   console.log("INDEX")
+  //   console.log(user)
+  //   return user
+  // }
+ 
   render() {
     return (
-        <Router>
-          <Scene key='root'>
-            <Scene key='loginPage' component={LoginPage} title='Log in' initial={true} />
-            <Scene key='contactsPage' component={ContactsPage} title='Contacts' />
-            <Scene key='addContact' component={AddContact} title='Add new contact' />
-            <Scene key='contactFullDetail' component={ContactFullDetail} title='Contact full detail' />
-          </Scene>
-        </Router>
+      <Router>
+        <Scene key='root'>
+          <Scene key='loginPage' component={LoginPage} title='Log in' initial={true} />
+          <Scene key='contactsPage' component={ContactsPage} title='Contacts'/>
+          <Scene key='addContact' component={AddContact} title='Add new contact' />
+          <Scene key='contactFullDetail' component={ContactFullDetail} title='Contact full detail' />
+        </Scene>
+      </Router>
     );
   }
   // render() {
