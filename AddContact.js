@@ -11,7 +11,7 @@ let newContact = tcomb.struct({
     name: tcomb.String,              // a required string
     telephone: tcomb.Number,
     address: tcomb.maybe(tcomb.String),
-    email: tcomb.maybe(tcomb.String)
+    email: tcomb.maybe(tcomb.String),
 })
 
 export default class AddContact extends Component {
@@ -32,28 +32,29 @@ export default class AddContact extends Component {
 
     clearForm = () => {
         // clear content from all textbox
+        console.log("Clear input from")
         this.setState({ value: null })
     }
 
     addContact = (newContact) => {
         firebase.database().ref('contacts').push(newContact).
             then((data) => {
-                dispatch({ type: "FULFILLED" })
                 console.log("add to Firebase success")
-                // Alert.alert(
-                //     'Alert Title',
-                //     'Add contact success',
-                //     [
-                //         { text: 'OK', onPress: () => console.log('OK Pressed') },
-                //     ],
-                //     { cancelable: false }
-                // )
                 this.clearForm()
+                Alert.alert(
+                    'Add new contact',
+                    'Add contact success',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: false }
+                )
+                dispatch({ type: "FULFILLED" })
             }).
             catch((err) => {
-                dispatch({ type: "REJECTED" })
                 console.log("add to Firebase failed")
                 this.clearForm()
+                dispatch({ type: "REJECTED" })
                 //error
             });
     }
