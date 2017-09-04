@@ -53,8 +53,8 @@ export default class ContactsPage extends React.Component {
 
     }
 
-    onPress = () => {
-        Actions.addContact()
+    addContact = () => {
+        Actions.addContact({uid:this.state.currentUser._user.uid})
     }
 
     getCurrentUser = () => {
@@ -86,7 +86,7 @@ export default class ContactsPage extends React.Component {
         return (
             <View style={styles.container}>
                 <ContactList uid={this.state.currentUser._user.uid} />
-                <TouchableHighlight style={[styles.button, { margin: 30 }]} onPress={this.onPress} underlayColor='#99d9f4'>
+                <TouchableHighlight style={[styles.button, { margin: 30 }]} onPress={this.addContact} underlayColor='#99d9f4'>
                     <Text style={styles.buttonText}>Add new contact</Text>
                 </TouchableHighlight>
                 <LogoutButton />
