@@ -4,31 +4,33 @@ import { Actions } from 'react-native-router-flux'
 import ContactList from './components/ContactList'
 import LogoutButton from './components/LogoutButton'
 import SubscribeSwitch from './components/SubscribeSwitch'
+import firebase from './Firebase'
 
 export default class ContactsPage extends React.Component {
     constructor(props) {
         super(props)
-        // this.state = { detail: false }
+        this.state = {
+            currentUser: null,
+            subscribe: false
+        }
     }
 
-    // init = () => {
-    //     this.setState({ detail: this.props })
-    // }
-
-    //if press go back button it will go back to contactPage
-
     componentWillMount = async () => {
+        const currentUser = this.getCurrentUser()
+        console.log("current user ", currentUser)
+        if (currentUser) {
+            this.setState({
+                currentUser: currentUser
+            })
+        }
         const user = await this.fetchUser()
         console.log(user)
-        console.log("PROPSSSSSSSS")
-        // console.log(this.props)
         if (user) {
             console.log("IF")
             this.setState({
                 user: user,
                 loggedIn: true
             })
-            console.log(this.state.user)
         }
         else {
             Actions.loginPage()
@@ -55,15 +57,43 @@ export default class ContactsPage extends React.Component {
         Actions.addContact()
     }
 
+    getCurrentUser = () => {
+        const user = firebase.auth().currentUser
+        return user
+    }
+
+    getUserSubscribe = (uid) => {
+        this.ref = firebase.database().ref(`users/${uid}`)
+        this.ref.on('value', this.handleSubscribeUpdate)
+    }
+
+    // Load the subscribe on mount
+    componentDidMount() {
+        this.getUserSubscribe(this.state.currentUser._user.uid)
+    }
+
+    // Handle subscribe updates
+    handleSubscribeUpdate = (snapshot) => {
+        let subscribe = snapshot.child('subscribe').val()
+        if (subscribe !== null) {
+            this.setState({
+                subscribe
+            })
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <ContactList />
+                <ContactList uid={this.state.currentUser._user.uid} />
                 <TouchableHighlight style={[styles.button, { margin: 30 }]} onPress={this.onPress} underlayColor='#99d9f4'>
                     <Text style={styles.buttonText}>Add new contact</Text>
                 </TouchableHighlight>
                 <LogoutButton />
-                <SubscribeSwitch />
+                <View style={{flexDirection: 'column', margin: 10, marginRight: 20}}>
+                    <Text style={{fontSize: 17, color: 'grey', alignSelf: 'flex-end'}}>Subscribe </Text>
+                    <SubscribeSwitch subscribe={this.state.subscribe} />
+                </View>
             </View>
 
         )

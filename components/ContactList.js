@@ -7,65 +7,71 @@ import firebase from '../Firebase'
 export default class ContactList extends React.Component {
 
     constructor(props) {
-          super(props);
-          this.ref = null;
-          this.listView = new ListView.DataSource({
+        super(props)
+        this.ref = null
+        this.listView = new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2,
-          });
+        })
 
-          this.state = {
+        this.state = {
             contacts: this.listView.cloneWithRows({}),
-          };
-
-          // Keep a local reference of the TODO items
-          this.contacts = {};
         }
 
-        // Load the Todos on mount
-        componentDidMount() {
-          this.ref = firebase.database().ref('contacts');
-          this.ref.on('value', this.handleContactsUpdate);
-        }
+        // Keep a local reference of the TODO items
+        this.contacts = {}
+    }
 
-        // Unsubscribe from the todos on unmount
-        componentWillUnmount() {
-          if (this.ref) {
-            this.ref.off('value', this.handleToDoUpdate);
-          }
-        }
+    getContactsFromFirebase = (uid) => {
+        console.log("YYY ", uid)
+        this.ref = firebase.database().ref(`contacts/${uid}`)
+        this.ref.on('value', this.handleContactsUpdate)
+    }
 
-        // Handle ToDo updates
-        handleContactsUpdate = (snapshot) => {
-          this.contacts = snapshot.val() || {};
-          console.log(this.contacts)
-          this.setState({
-            contacts: this.listView.cloneWithRows(this.contacts),
-          });
-        }
+    // Load the contacts on mount
+    componentDidMount() {
+        console.log("XXXX ", this.props.uid)
+        this.getContactsFromFirebase(this.props.uid)
+    }
 
-        // Render a contact row
-        renderContacts(rowData) {
-            return (
-                <ContactInfo {...rowData}></ContactInfo>
-            );
-        }
-
-        render() {
-            return (
-                <View style={styles.container}>
-                    <ListView
-                        dataSource={this.state.contacts}
-                        renderRow={(...args) => this.renderContacts(...args)}
-                    />
-                </View>
-            )
+    // Unsubscribe from the todos on unmount
+    componentWillUnmount() {
+        if (this.ref) {
+            this.ref.off('value', this.handleToDoUpdate)
         }
     }
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            backgroundColor: 'white',
-            justifyContent: 'center'
-        }
-    });
+    // Handle contacts updates
+    handleContactsUpdate = (snapshot) => {
+        this.contacts = snapshot.val() || {};
+        console.log("ZZZZ ", this.contacts)
+        this.setState({
+            contacts: this.listView.cloneWithRows(this.contacts),
+        })
+    }
+
+    // Render a contact row
+    renderContacts(rowData) {
+        return (
+            <ContactInfo {...rowData}></ContactInfo>
+        );
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <ListView
+                    dataSource={this.state.contacts}
+                    renderRow={(...args) => this.renderContacts(...args)}
+                />
+            </View>
+        )
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+        justifyContent: 'center'
+    }
+});
