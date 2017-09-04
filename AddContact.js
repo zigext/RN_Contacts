@@ -37,7 +37,7 @@ export default class AddContact extends Component {
     }
 
     addContact = (newContact) => {
-        firebase.database().ref('contacts').push(newContact).
+        firebase.database().ref(`contacts/${this.props.uid}`).push(newContact).
             then((data) => {
                 console.log("add to Firebase success")
                 this.clearForm()
