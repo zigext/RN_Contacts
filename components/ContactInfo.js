@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, ListView, Image, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, Button, ListView, Image, TouchableHighlight, TouchableOpacity } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 
 export default class ContactInfo extends React.Component {
@@ -7,25 +7,29 @@ export default class ContactInfo extends React.Component {
         super(props)
     }
 
-
-
-    render() {
-        pressRow = () => {
+ pressRow = () => {
             console.log("click")
             console.log(this.props)
             Actions.contactFullDetail({ ...{ data: this.props } })
         }
+
+    render() {
+       
         return (
             <View>
-            <TouchableHighlight onPress={pressRow}>
+            <TouchableOpacity onPress={this.pressRow}>
+                
                 <View style={styles.container}>
+                   
                     <Image source={{ uri: this.props.picture }} style={styles.image}></Image>
+                    
                     <View style={styles.detailContainer}>
                         <Text style={styles.telephone}>{this.props.telephone}</Text>
                         <Text style={styles.name}>{this.props.name}</Text>
                     </View>
                 </View>
-            </TouchableHighlight>
+               
+            </TouchableOpacity>
             </View>
         );
     }
