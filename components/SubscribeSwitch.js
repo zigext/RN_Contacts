@@ -8,11 +8,13 @@ export default class SubscribeSwitch extends Component {
         super(props)
         this.ref = null
         this.state = {
-            switchValue: false,
             subscribe: false,
             prevSubscribe: false
         }
     }
+
+    //this.state.subscribe used to update value of switch
+    //this.state.prevSubscribe used to update subscribe value in database
 
     getUserSubscribe = async (uid) => {
         console.log("get subscribe ")
@@ -25,6 +27,7 @@ export default class SubscribeSwitch extends Component {
         await this.getUserSubscribe(this.props.uid)
     }
 
+    //called autometically when subscribe value in database changed
     // Handle subscribe updates
     handleSubscribeUpdate = async (snapshot) => {
         let subscribe = snapshot.child('subscribe').val()
@@ -41,7 +44,6 @@ export default class SubscribeSwitch extends Component {
     }
 
     toggleSwitch = async (value) => {
-        // console.log("switch")
         await this.setState({ prevSubscribe: !this.state.prevSubscribe })
         console.log("toggle ", this.state.prevSubscribe)
         if (this.state.prevSubscribe) {
@@ -50,56 +52,57 @@ export default class SubscribeSwitch extends Component {
         else {
             this.unsubscribeFromTopic()
         }
-        }
-
-        subscribeToTopic = () => {
-            console.log("Subscribe to topic contacts")
-            this.setState({
-                subscribe: true
-            })
-            firebase.messaging().subscribeToTopic('contacts')
-            this.updateSubscribeInFirebase()
-        }
-
-        unsubscribeFromTopic = () => {
-            console.log("Unsubscribe from topic contacts")
-            this.setState({
-                subscribe: false
-            })
-            this.updateSubscribeInFirebase()
-            // firebase.messaging().unsubscribeFromTopic('contacts')
-        }
-
-        updateSubscribeInFirebase = () => {
-            let subscribeSaved = this.state.prevSubscribe
-            firebase.database().ref(`users/${this.props.uid}/subscribe`).set(subscribeSaved).
-                then((data) => {
-                    console.log("update subscribe to Firebase success")
-                    // dispatch({ type: "FULFILLED" })
-                }).
-                catch((err) => {
-                    console.log("update subscribe to Firebase failed")
-                    // dispatch({ type: "REJECTED" })
-                });
-        }
-
-        render() {
-            return (
-                <View style={styles.container}>
-                    <Switch onValueChange={this.toggleSwitch} value={this.state.subscribe} />
-                    <Text style={styles.text}>{this.state.subscribe ? 'ON' : 'OFF'}</Text>
-                </View>
-            )
-        }
     }
 
-    const styles = StyleSheet.create({
-        container: {
-            alignSelf: 'flex-end'
-        },
+    subscribeToTopic = () => {
+        console.log("Subscribe to topic contacts")
+        this.setState({
+            subscribe: true
+        })
+        firebase.messaging().subscribeToTopic('contacts')
+        this.updateSubscribeInFirebase()
+    }
 
-        text: {
-            fontSize: 15,
-            color: 'grey',
-        }
-    })
+    unsubscribeFromTopic = () => {
+        console.log("Unsubscribe from topic contacts")
+        this.setState({
+            subscribe: false
+        })
+        this.updateSubscribeInFirebase()
+        // firebase.messaging().unsubscribeFromTopic('contacts')
+    }
+
+    //update subscribe value
+    updateSubscribeInFirebase = () => {
+        let subscribeSaved = this.state.prevSubscribe
+        firebase.database().ref(`users/${this.props.uid}/subscribe`).set(subscribeSaved).
+            then((data) => {
+                console.log("update subscribe to Firebase success")
+                // dispatch({ type: "FULFILLED" })
+            }).
+            catch((err) => {
+                console.log("update subscribe to Firebase failed")
+                // dispatch({ type: "REJECTED" })
+            });
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <Switch onValueChange={this.toggleSwitch} value={this.state.subscribe} />
+                <Text style={styles.text}>{this.state.subscribe ? 'ON' : 'OFF'}</Text>
+            </View>
+        )
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        alignSelf: 'flex-end'
+    },
+
+    text: {
+        fontSize: 15,
+        color: 'grey',
+    }
+})
