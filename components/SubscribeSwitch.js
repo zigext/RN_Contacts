@@ -6,38 +6,100 @@ import firebase from '../Firebase'
 export default class SubscribeSwitch extends Component {
     constructor(props) {
         super(props)
+        this.ref = null
         this.state = {
-            switchValue: false
+            switchValue: false,
+            subscribe: false,
+            prevSubscribe: false
         }
     }
 
-    toggleSwitch = (value) => {
-        console.log("switch")
-        this.setState({ switchValue: !this.state.switchValue })
-        firebase.messaging().subscribeToTopic('contacts')
+    getUserSubscribe = async (uid) => {
+        console.log("get subscribe ")
+        this.ref = firebase.database().ref(`users/${uid}`)
+        this.ref.on('value', this.handleSubscribeUpdate)
     }
 
-    sunscribe = () => {
-        firebase.messaging().subscribeToTopic('contacts')
+    // Load the subscribe on mount
+    componentDidMount = async () => {
+        await this.getUserSubscribe(this.props.uid)
     }
 
-    render() {
-        return (
-            <View style={styles.container}>
-                <Switch onValueChange={this.toggleSwitch} value={this.state.switchValue} onValueChange={this.toggleSwitch} />
-                <Text style={styles.text}>{this.state.switchValue ? 'ON' : 'OFF'}</Text>
-            </View>
-        )
+    // Handle subscribe updates
+    handleSubscribeUpdate = async (snapshot) => {
+        let subscribe = snapshot.child('subscribe').val()
+        if (subscribe !== null) {
+            console.log("PREV before set ", this.state.prevSubscribe)
+            await this.setState({
+                subscribe,
+                prevSubscribe: subscribe
+            })
+            console.log("SET SUBSCRIBE if != null ", this.state.subscribe)
+            console.log("PREV after set ", this.state.prevSubscribe)
+        }
+        console.log("handle update SUBSCRIBE ")
     }
-}
 
-const styles = StyleSheet.create({
-    container: {
-        alignSelf: 'flex-end'
-    },
+    toggleSwitch = async (value) => {
+        // console.log("switch")
+        await this.setState({ prevSubscribe: !this.state.prevSubscribe })
+        console.log("toggle ", this.state.prevSubscribe)
+        if (this.state.prevSubscribe) {
+            this.subscribeToTopic()
+        }
+        else {
+            this.unsubscribeFromTopic()
+        }
+        }
 
-    text: {
-        fontSize: 15,
-        color: 'grey',
+        subscribeToTopic = () => {
+            console.log("Subscribe to topic contacts")
+            this.setState({
+                subscribe: true
+            })
+            firebase.messaging().subscribeToTopic('contacts')
+            this.updateSubscribeInFirebase()
+        }
+
+        unsubscribeFromTopic = () => {
+            console.log("Unsubscribe from topic contacts")
+            this.setState({
+                subscribe: false
+            })
+            this.updateSubscribeInFirebase()
+            // firebase.messaging().unsubscribeFromTopic('contacts')
+        }
+
+        updateSubscribeInFirebase = () => {
+            let subscribeSaved = this.state.prevSubscribe
+            firebase.database().ref(`users/${this.props.uid}/subscribe`).set(subscribeSaved).
+                then((data) => {
+                    console.log("update subscribe to Firebase success")
+                    // dispatch({ type: "FULFILLED" })
+                }).
+                catch((err) => {
+                    console.log("update subscribe to Firebase failed")
+                    // dispatch({ type: "REJECTED" })
+                });
+        }
+
+        render() {
+            return (
+                <View style={styles.container}>
+                    <Switch onValueChange={this.toggleSwitch} value={this.state.subscribe} />
+                    <Text style={styles.text}>{this.state.subscribe ? 'ON' : 'OFF'}</Text>
+                </View>
+            )
+        }
     }
-})
+
+    const styles = StyleSheet.create({
+        container: {
+            alignSelf: 'flex-end'
+        },
+
+        text: {
+            fontSize: 15,
+            color: 'grey',
+        }
+    })

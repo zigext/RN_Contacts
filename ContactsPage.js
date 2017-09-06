@@ -62,25 +62,25 @@ export default class ContactsPage extends React.Component {
         return user
     }
 
-    getUserSubscribe = (uid) => {
-        this.ref = firebase.database().ref(`users/${uid}`)
-        this.ref.on('value', this.handleSubscribeUpdate)
-    }
+    // getUserSubscribe = (uid) => {
+    //     this.ref = firebase.database().ref(`users/${uid}`)
+    //     this.ref.on('value', this.handleSubscribeUpdate)
+    // }
 
-    // Load the subscribe on mount
-    componentDidMount() {
-        this.getUserSubscribe(this.state.currentUser._user.uid)
-    }
+    // // Load the subscribe on mount
+    // componentDidMount() {
+    //     this.getUserSubscribe(this.state.currentUser._user.uid)
+    // }
 
-    // Handle subscribe updates
-    handleSubscribeUpdate = (snapshot) => {
-        let subscribe = snapshot.child('subscribe').val()
-        if (subscribe !== null) {
-            this.setState({
-                subscribe
-            })
-        }
-    }
+    // // Handle subscribe updates
+    // handleSubscribeUpdate = (snapshot) => {
+    //     let subscribe = snapshot.child('subscribe').val()
+    //     if (subscribe !== null) {
+    //         this.setState({
+    //             subscribe
+    //         })
+    //     }
+    // }
 
     render() {
         return (
@@ -92,7 +92,7 @@ export default class ContactsPage extends React.Component {
                 <LogoutButton />
                 <View style={{flexDirection: 'column', margin: 10, marginRight: 20}}>
                     <Text style={{fontSize: 17, color: 'grey', alignSelf: 'flex-end'}}>Subscribe </Text>
-                    <SubscribeSwitch subscribe={this.state.subscribe} />
+                    <SubscribeSwitch uid={this.state.currentUser._user.uid} />
                 </View>
             </View>
 
