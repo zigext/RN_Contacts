@@ -71,7 +71,7 @@ export default class LoginPage extends Component {
     }
 
     saveUserToFirebase = (uid, email) => {
-        firebase.database().ref(`users/${uid}`).set({email: email}).
+        firebase.database().ref(`users/${uid}`).set({ email: email }).
             then((data) => {
                 console.log("add user to Firebase success")
                 dispatch({ type: "FULFILLED" })
@@ -82,7 +82,7 @@ export default class LoginPage extends Component {
             });
     }
 
-    logIn = () => {
+    logIn = (callback) => {
         // call getValue() to get the values of the form
         let value = this.refs.form.getValue();
 
@@ -92,22 +92,21 @@ export default class LoginPage extends Component {
             firebase.auth().signInWithEmailAndPassword(value.email, value.password)
                 .then((user) => {
                     console.log('User successfully logged in', user)
-                    console.log('XXXXXXX', user._user.email)
-                    console.log('YYYYYYY', user._user.uid)
-                    this.saveUserToFirebase(user._user.uid,user._user.email)
+                    this.saveUserToFirebase(user._user.uid, user._user.email)
                     this.saveUser(user).then(this.fetchUser())
                     ToastAndroid.showWithGravity('Log in success!', ToastAndroid.SHORT, ToastAndroid.CENTER)
                     Actions.contactsPage()
                 })
                 .catch((error) => {
-                    //error 
-                    console.error('User signin error', error);
-                    ToastAndroid.showWithGravity('Email or password is incorrect', ToastAndroid.SHORT, ToastAndroid.CENTER)
+                    callback(error)
                 })
-
-
         }
     }
+
+    toastWrongPassword = () => {
+        ToastAndroid.showWithGravity('Email or password is incorrect', ToastAndroid.SHORT, ToastAndroid.CENTER)
+    }
+
     render() {
         const progressBar =
             <View style={styles.container}>
@@ -120,11 +119,11 @@ export default class LoginPage extends Component {
                     type={user}
                     options={options}
                 />
-                <TouchableHighlight style={styles.button} onPress={this.logIn} underlayColor='#99d9f4' loadingView={progressBar}>
+                <TouchableHighlight style={styles.button} onPress={() => this.logIn(this.toastWrongPassword) } underlayColor='#99d9f4' loadingView={progressBar}>
                     <Text style={styles.buttonText}>Log in</Text>
                 </TouchableHighlight>
 
-            </View>
+            </View >
         )
     }
 }
