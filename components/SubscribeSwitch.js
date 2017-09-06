@@ -60,6 +60,9 @@ export default class SubscribeSwitch extends Component {
             subscribe: true
         })
         firebase.messaging().subscribeToTopic('contacts')
+        firebase.messaging().onMessage((message) => {
+            console.log("onmessage ", message)
+        })
         this.updateSubscribeInFirebase()
     }
 
@@ -69,7 +72,7 @@ export default class SubscribeSwitch extends Component {
             subscribe: false
         })
         this.updateSubscribeInFirebase()
-        // firebase.messaging().unsubscribeFromTopic('contacts')
+        firebase.messaging().unsubscribeFromTopic('contacts')
     }
 
     //update subscribe value
@@ -100,7 +103,6 @@ const styles = StyleSheet.create({
     container: {
         alignSelf: 'flex-end'
     },
-
     text: {
         fontSize: 15,
         color: 'grey',
