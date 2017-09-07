@@ -15,7 +15,7 @@ export default class ContactFullDetail extends React.Component {
     render() {
         return (
             <ScrollView>
-                <View style={{marginVertical: 20}}>
+                <View style={styles.container}>
                     <Text style={styles.name}>{this.props.data.name}</Text>
                     <Image source={{ uri: this.props.data.picture }} style={styles.image}></Image>
                     <Text style={styles.name}>Mobile :<Text style={styles.name}>{this.props.data.telephone}</Text></Text>
@@ -31,25 +31,9 @@ export default class ContactFullDetail extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         justifyContent: 'center',
-        marginTop: 30,
-        flexDirection: 'column'
-    },
-    buttonText: {
-        fontSize: 18,
-        color: 'white',
-        alignSelf: 'center'
-    },
-    button: {
-        height: 36,
-        backgroundColor: '#48BBEC',
-        borderColor: '#48BBEC',
-        borderWidth: 1,
-        borderRadius: 8,
-        marginBottom: 10,
-        alignSelf: 'stretch',
-        justifyContent: 'center'
+        flexDirection: 'column',
+        marginVertical: 20
     },
     name: {
         fontSize: 19,
@@ -61,6 +45,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         margin: 20,
         alignItems: 'center',
+        alignSelf: 'center',
         height: 100,
         borderRadius: 50,
         width: 100,
